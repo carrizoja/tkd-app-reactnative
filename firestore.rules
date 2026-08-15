@@ -1,0 +1,136 @@
+rules_version = '2';
+
+// Multi-tenant isolation (design D3). A caller's scope lives in
+// memberships/{uid}: either association scope (sees every school whose
+// associationId matches) or school scope (sees only the schools listed in
+// schoolIds). Every descendant document carries a denormalized `schoolId`
+// (and `associationId` where relevant) so access can be decided by comparing
+// fields, with a single get() to resolve a school's association when needed.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function membershipPath() {
+      return /databases/$(database)/documents/memberships/$(request.auth.uid);
+    }
+
+    function hasMembership() {
+      return isSignedIn() && exists(membershipPath());
+    }
+
+    function membership() {
+      return get(membershipPath()).data;
+    }
+
+    // True when the caller's membership covers `schoolId`. School-scope users
+    // match directly against their schoolIds; association-scope users match
+    // when the school belongs to their association (resolved via a lookup).
+    function canAccessSchool(schoolId) {
+      return hasMembership() && (
+        (membership().scope == 'school' &&
+          membership().schoolIds.hasAny([schoolId])) ||
+        (membership().scope == 'association' &&
+          get(/databases/$(database)/documents/schools/$(schoolId)).data.associationId
+            == membership().associationId)
+      );
+    }
+
+    // School documents are keyed by schoolId; their association is a field, so
+    // access is decided without an extra lookup (works for create too).
+    function canAccessSchoolDoc(schoolId, data) {
+      return hasMembership() && (
+        (membership().scope == 'school' &&
+          membership().schoolIds.hasAny([schoolId])) ||
+        (membership().scope == 'association' &&
+          data.associationId == membership().associationId)
+      );
+    }
+
+    // A user may read only their own membership document; memberships are
+    // assigned out-of-band (admin/seed), never written by the client.
+    match /memberships/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /associations/{associationId} {
+      allow read, write: if hasMembership() &&
+        membership().scope == 'association' &&
+        membership().associationId == associationId;
+    }
+
+    match /schools/{schoolId} {
+      allow read, delete: if canAccessSchoolDoc(schoolId, resource.data);
+      allow create: if canAccessSchoolDoc(schoolId, request.resource.data);
+      allow update: if canAccessSchoolDoc(schoolId, resource.data) &&
+        canAccessSchoolDoc(schoolId, request.resource.data);
+    }
+
+    // All remaining tenant collections carry a `schoolId` field and are scoped
+    // uniformly. Writes must both target and originate within the caller's
+    // scope (checked against resource.data and request.resource.data).
+    match /sedes/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /students/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /studentGroups/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /classes/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /classEnrollments/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /attendance/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /payments/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    match /events/{id} {
+      allow read, delete: if canAccessSchool(resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow update: if canAccessSchool(resource.data.schoolId) &&
+        canAccessSchool(request.resource.data.schoolId);
+    }
+
+    // Deny anything not explicitly matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

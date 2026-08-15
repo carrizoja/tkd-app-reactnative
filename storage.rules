@@ -1,0 +1,40 @@
+rules_version = '2';
+
+// Student photos live under students/{schoolId}/{studentId}/... and are scoped
+// by the same membership model as Firestore: a user may read/write a student's
+// photo only when their membership covers that school. Association-scope access
+// resolves the school's association via a Firestore lookup.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function membership() {
+      return firestore.get(/databases/(default)/documents/memberships/$(request.auth.uid)).data;
+    }
+
+    function hasMembership() {
+      return isSignedIn() &&
+        firestore.exists(/databases/(default)/documents/memberships/$(request.auth.uid));
+    }
+
+    function canAccessSchool(schoolId) {
+      return hasMembership() && (
+        (membership().scope == 'school' && membership().schoolIds.hasAny([schoolId])) ||
+        (membership().scope == 'association' &&
+          firestore.get(/databases/(default)/documents/schools/$(schoolId)).data.associationId
+            == membership().associationId)
+      );
+    }
+
+    match /students/{schoolId}/{studentId}/{fileName} {
+      allow read, write: if canAccessSchool(schoolId);
+    }
+
+    // Everything else is denied by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
