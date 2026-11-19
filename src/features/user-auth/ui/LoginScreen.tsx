@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { loginWithEmail } from "../data/auth-service";
+import { signInWithGoogle } from "../data/google-signin";
 import { AuthError } from "../model/auth-user";
 import { AUTH_COPY, authErrorMessage } from "./copy";
 import { loginSchema, type LoginForm } from "./credentials-schema";
@@ -21,6 +22,7 @@ interface LoginScreenProps {
 
 export function LoginScreen({ onGoToRegister }: LoginScreenProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const {
     control,
     handleSubmit,
@@ -42,6 +44,27 @@ export function LoginScreen({ onGoToRegister }: LoginScreenProps) {
       );
     }
   });
+
+  const onGooglePress = async () => {
+    setSubmitError(null);
+    setGoogleBusy(true);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      // Dismissing the Google sheet is a deliberate choice, not a failure —
+      // showing an error for it would be noise.
+      if (error instanceof AuthError && error.code === "cancelled") {
+        return;
+      }
+      setSubmitError(
+        error instanceof AuthError
+          ? authErrorMessage(error.code)
+          : authErrorMessage("unknown"),
+      );
+    } finally {
+      setGoogleBusy(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -109,6 +132,27 @@ export function LoginScreen({ onGoToRegister }: LoginScreenProps) {
         >
           <Text className="text-base font-semibold text-white">
             {AUTH_COPY.submitLogin}
+          </Text>
+        </Pressable>
+
+        <View className="flex-row items-center gap-3">
+          <View className="h-px flex-1 bg-slate-200" />
+          <Text className="text-xs uppercase text-slate-400">
+            {AUTH_COPY.orSeparator}
+          </Text>
+          <View className="h-px flex-1 bg-slate-200" />
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          disabled={googleBusy || isSubmitting}
+          onPress={onGooglePress}
+          className={`items-center rounded-xl border px-4 py-4 ${
+            googleBusy ? "border-slate-200 bg-slate-50" : "border-slate-300 bg-white"
+          }`}
+        >
+          <Text className="text-base font-semibold text-slate-900">
+            {AUTH_COPY.continueWithGoogle}
           </Text>
         </Pressable>
 

@@ -5,13 +5,16 @@
  */
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signOut,
   type User,
 } from "firebase/auth";
 import { getFirebaseAuth } from "../../../lib/firebase";
-import { AuthError, type AuthUser } from "../model/auth-user";
+import type { AuthUser } from "../model/auth-user";
+import { toAuthError } from "./auth-errors";
 
 function toAuthUser(user: User): AuthUser {
   return {
@@ -19,41 +22,6 @@ function toAuthUser(user: User): AuthUser {
     email: user.email,
     displayName: user.displayName,
   };
-}
-
-function providerErrorCode(error: unknown): string {
-  if (typeof error === "object" && error !== null && "code" in error) {
-    return String((error as { code: unknown }).code);
-  }
-  return "";
-}
-
-/**
- * Maps Firebase error codes onto `AuthError`. Messages here are technical and
- * English; Spanish user-facing copy lives in the UI layer (`ui/messages.ts`).
- */
-function toAuthError(error: unknown): AuthError {
-  switch (providerErrorCode(error)) {
-    case "auth/email-already-in-use":
-      return new AuthError("email-already-in-use", "That address is already taken.");
-    // Firebase collapses wrong-password / unknown-user into `invalid-credential`
-    // when email-enumeration protection is on; older codes are kept for safety.
-    case "auth/invalid-credential":
-    case "auth/invalid-login-credentials":
-    case "auth/wrong-password":
-    case "auth/user-not-found":
-      return new AuthError("invalid-credentials", "Invalid credentials.");
-    case "auth/weak-password":
-      return new AuthError("weak-password", "The password is too weak.");
-    case "auth/invalid-email":
-      return new AuthError("invalid-email", "Malformed address.");
-    case "auth/too-many-requests":
-      return new AuthError("too-many-requests", "Too many attempts, try again later.");
-    case "auth/network-request-failed":
-      return new AuthError("network-error", "Network request failed.");
-    default:
-      return new AuthError("unknown", "Authentication failed.");
-  }
 }
 
 /** Create an account and start an authenticated session. */
@@ -83,6 +51,26 @@ export async function loginWithEmail(
       getFirebaseAuth(),
       email,
       password,
+    );
+    return toAuthUser(credential.user);
+  } catch (error) {
+    throw toAuthError(error);
+  }
+}
+
+/**
+ * Exchange a Google ID token for a Firebase session.
+ *
+ * The token itself comes from whichever native/browser Google flow the app
+ * uses — Firebase's own `signInWithPopup`/`signInWithRedirect` do NOT work in
+ * React Native, so acquisition always happens outside this module and only the
+ * resulting token is exchanged here.
+ */
+export async function signInWithGoogleToken(idToken: string): Promise<AuthUser> {
+  try {
+    const credential = await signInWithCredential(
+      getFirebaseAuth(),
+      GoogleAuthProvider.credential(idToken),
     );
     return toAuthUser(credential.user);
   } catch (error) {

@@ -20,7 +20,7 @@ SHALL reject registration when the email is already in use.
 
 ### Requirement: Login
 The system SHALL authenticate a registered user via email/password and via
-Google and Facebook social login.
+Google social login.
 
 #### Scenario: Valid credentials
 - **WHEN** a registered user submits correct credentials
@@ -31,8 +31,18 @@ Google and Facebook social login.
 - **THEN** the system denies access and shows a login error without revealing which field was wrong
 
 #### Scenario: Social login
-- **WHEN** a user completes Google or Facebook authentication
+- **WHEN** a user completes Google authentication
 - **THEN** the system starts an authenticated session linked to that identity
+
+#### Scenario: Social login cancelled
+- **WHEN** a user dismisses the Google sign-in sheet without choosing an account
+- **THEN** the system returns to the login screen without reporting a failure
+
+#### Scenario: Address already used by another provider
+- **WHEN** a user signs in with Google using an address that already has an
+  email/password account
+- **THEN** the system explains that the account exists under another sign-in
+  method instead of reporting invalid credentials
 
 ### Requirement: Session and scope resolution
 The system SHALL keep a user signed in across app restarts until they sign out,

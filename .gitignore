@@ -1,1 +1,46 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native builds (managed workflow regenerates these)
+/android
+/ios
+*.apk
+*.aab
+*.ipa
+
+# Metro
+.metro-health-check*
+
+# Environment — never commit real credentials; see .env.example
+.env
+.env.*
+!.env.example
+
+# Firebase
+.firebase/
+*-debug.log
+firebase-debug.*.log
+firestore-debug.*.log
+serviceAccountKey.json
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Editors and OS
+.DS_Store
+*.pem

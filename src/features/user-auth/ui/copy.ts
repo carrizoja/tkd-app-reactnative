@@ -16,6 +16,8 @@ export const AUTH_COPY = {
   passwordPlaceholder: "Tu contraseña",
   submitRegister: "Registrarme",
   submitLogin: "Ingresar",
+  continueWithGoogle: "Continuar con Google",
+  orSeparator: "o",
   goToLogin: "¿Ya tenés cuenta? Iniciá sesión",
   goToRegister: "¿No tenés cuenta? Registrate",
   signOut: "Cerrar sesión",
@@ -32,8 +34,26 @@ export const AUTH_COPY = {
     "too-many-requests": "Demasiados intentos. Probá de nuevo en unos minutos.",
     "network-error": "Sin conexión. Revisá tu internet e intentá otra vez.",
     cancelled: "Cancelaste el inicio de sesión.",
+    "account-exists-with-other-provider":
+      "Ese correo ya tiene una cuenta creada con otro método. Ingresá con el método que usaste la primera vez.",
     unknown: "No pudimos completar la operación. Intentá otra vez.",
   } satisfies Record<AuthErrorCode, string>,
+} as const;
+
+/**
+ * Copy for the auth gate (task 3.7). "Sin asignar" and "no pudimos leer tus
+ * permisos" are deliberately different messages: the first is resolved by an
+ * administrator, the second by retrying.
+ */
+export const SESSION_COPY = {
+  loading: "Cargando…",
+  unassignedTitle: "Todavía no tenés una escuela asignada",
+  unassignedBody:
+    "Pedile a un administrador de tu asociación que te asigne a una escuela para empezar a usar la app.",
+  unavailableTitle: "No pudimos verificar tus permisos",
+  unavailableBody:
+    "Puede ser un problema de conexión. Intentá de nuevo en unos segundos.",
+  retry: "Reintentar",
 } as const;
 
 /** Spanish message for a failure code, falling back to the generic one. */

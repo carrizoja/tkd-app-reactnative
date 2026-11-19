@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "76942291111",
+    "project_id": "tkd-app-e3df0",
+    "storage_bucket": "tkd-app-e3df0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76942291111:android:1c6518db3e8c543e936b82",
+        "android_client_info": {
+          "package_name": "ar.com.escuelaulji.tkdmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76942291111-uuu4lai9d03uksvubulgd0vq9c8mkoig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ar.com.escuelaulji.tkdmobile",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "76942291111-2cvb0n8psallmssdou5a8t9sgun0nrec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC11_5wHJoVp7GQUlTMl_zZ-ys_nfCkXK8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76942291111-2cvb0n8psallmssdou5a8t9sgun0nrec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

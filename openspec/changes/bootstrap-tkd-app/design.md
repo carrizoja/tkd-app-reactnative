@@ -88,7 +88,7 @@ mirroring the report's HOME hub. UI copy in Spanish (Argentina); code in English
   does not touch screens.
 
 ### D5 — Auth
-Firebase Auth with email/password plus Google and Facebook providers. On login
+Firebase Auth with email/password plus Google. On login
 the app loads `memberships/{uid}` to resolve scope. Session persistence uses the
 Firebase Auth persisted session (no manual token/SQLite handling like the legacy
 app).
@@ -105,8 +105,8 @@ app).
 - **Query constraints** → Firestore needs composite indexes for compound
   filters and can't do arbitrary text search. Mitigation: define indexes up
   front; use `lastNameLower` prefix ranges for search.
-- **Social login setup** → Google/Facebook providers need console + native
-  config. Mitigation: ship email/password first; add providers as a discrete
+- **Social login setup** → Google needs console + native config and a development
+  build. Mitigation: ship email/password first; add Google as a discrete
   task.
 - **Vendor lock-in / offline** → Firestore SDK is Firebase-specific but offers
   offline persistence out of the box. Mitigation: repository interface (D4)

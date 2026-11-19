@@ -16,8 +16,8 @@ bootstraps the MVP of that application.
 - **Firebase backend**: Cloud Firestore as the system of record, Firebase Auth
   for login, Firebase Storage for student photos, and Firestore Security Rules
   to enforce multi-tenant scoping (association-wide vs. single-school).
-- **Instructor authentication**: email/password plus Google and Facebook social
-  login; a single administrator role with two scope levels (association
+- **Instructor authentication**: email/password plus Google social login; a
+  single administrator role with two scope levels (association
   president vs. single-school instructor).
 - **School hierarchy management**: Association → School → Sede (branch).
 - **Student management**: student records, student groups, per-student profile
@@ -38,8 +38,8 @@ can be added without breaking changes.
 ## Capabilities
 
 ### New Capabilities
-- `user-auth`: Instructor registration, email/password and social (Google,
-  Facebook) login, session handling, and the administrator role with its two
+- `user-auth`: Instructor registration, email/password and Google login, session
+  handling, and the administrator role with its two
   scope levels (association vs. school).
 - `school-management`: CRUD and hierarchy for Association, School, and Sede
   (branch), including the multi-tenant scoping boundary each user can see.
@@ -65,7 +65,7 @@ can be added without breaking changes.
 - **New Firebase project**: Firestore collections (associations, schools, sedes,
   students, student_groups, classes, class_enrollments, attendance, payments,
   events), Security Rules for tenant isolation, Auth providers
-  (email/password, Google, Facebook), and a Storage bucket for photos.
+  (email/password and Google), and a Storage bucket for photos.
 - **Dependencies**: `expo`, `react-native`, `nativewind`, `tailwindcss`,
   `firebase`, a navigation library, and a forms/validation library.
 - **No existing systems affected** — greenfield project (legacy code untouched).

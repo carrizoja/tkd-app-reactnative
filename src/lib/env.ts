@@ -51,6 +51,19 @@ export function readFirebaseEnv(): FirebaseEnv {
   };
 }
 
+/**
+ * The **Web** OAuth client id from the Firebase project (Authentication ->
+ * Sign-in method -> Google). Google Sign-In needs the web client id — not the
+ * Android one — to return an `idToken` that Firebase Auth will accept; the
+ * Android client is matched separately by package name + SHA-1 fingerprint.
+ */
+export function googleWebClientId(): string {
+  return required(
+    "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID",
+    process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  );
+}
+
 /** True when the app should talk to the local Firebase Emulator Suite. */
 export function useEmulator(): boolean {
   return process.env.EXPO_PUBLIC_USE_EMULATOR === "1";

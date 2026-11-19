@@ -23,7 +23,10 @@ export type AuthErrorCode =
   | "invalid-email"
   | "too-many-requests"
   | "network-error"
+  /** The social sign-in sheet was dismissed by the user. */
   | "cancelled"
+  /** The address already has an account created with a different provider. */
+  | "account-exists-with-other-provider"
   | "unknown";
 
 export class AuthError extends Error {
