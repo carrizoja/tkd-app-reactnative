@@ -44,7 +44,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "test": "jest --selectProjects app",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-tkd \"jest --selectProjects rules --runInBand\"",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-tkd \"jest --selectProjects rules --runInBand\"",
     "test:auth": "firebase emulators:exec --only auth,firestore --project demo-tkd \"jest --selectProjects auth --runInBand\"",
     "emulators": "firebase emulators:start --project demo-tkd",
     "seed": "firebase emulators:exec --only firestore,auth --project demo-tkd \"node scripts/seed.cjs\""

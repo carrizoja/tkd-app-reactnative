@@ -103,9 +103,11 @@ service cloud.firestore {
 
     match /students/{id} {
       allow read, delete: if canAccessSchool(resource.data.schoolId);
-      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId) &&
+        matchesSchoolAssociation(request.resource.data);
       allow update: if canAccessSchool(resource.data.schoolId) &&
-        canAccessSchool(request.resource.data.schoolId);
+        canAccessSchool(request.resource.data.schoolId) &&
+        matchesSchoolAssociation(request.resource.data);
     }
 
     match /studentGroups/{id} {

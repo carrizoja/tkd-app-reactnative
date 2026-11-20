@@ -28,8 +28,17 @@ service firebase.storage {
       );
     }
 
+    // Profile photos: raster images under 5 MB only, so a client cannot store
+    // arbitrary files or exhaust the bucket through this path. SVG is excluded
+    // because it can carry scripts. Mirrors PHOTO_TYPES in student-service.ts.
+    function isAcceptablePhoto() {
+      return request.resource.size < 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/(jpeg|png|webp|heic|heif)');
+    }
+
     match /students/{schoolId}/{studentId}/{fileName} {
-      allow read, write: if canAccessSchool(schoolId);
+      allow read, delete: if canAccessSchool(schoolId);
+      allow create, update: if canAccessSchool(schoolId) && isAcceptablePhoto();
     }
 
     // Everything else is denied by default.
