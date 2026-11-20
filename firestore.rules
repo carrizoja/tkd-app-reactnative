@@ -62,11 +62,31 @@ service cloud.firestore {
         membership().associationId == associationId;
     }
 
+    // Schools belong to an association, so only association scope creates or
+    // deletes them. A school-scope user matches on the doc id alone and could
+    // otherwise delete its school and recreate it under another association.
+    function isAssociationOwnerOf(data) {
+      return hasMembership() &&
+        membership().scope == 'association' &&
+        data.associationId == membership().associationId;
+    }
+
     match /schools/{schoolId} {
-      allow read, delete: if canAccessSchoolDoc(schoolId, resource.data);
-      allow create: if canAccessSchoolDoc(schoolId, request.resource.data);
+      allow read: if canAccessSchoolDoc(schoolId, resource.data);
+      allow delete: if isAssociationOwnerOf(resource.data);
+      allow create: if isAssociationOwnerOf(request.resource.data);
+      // A school never changes association: a school-scope user would
+      // otherwise pass both checks (they match on the doc id) while moving it.
       allow update: if canAccessSchoolDoc(schoolId, resource.data) &&
-        canAccessSchoolDoc(schoolId, request.resource.data);
+        canAccessSchoolDoc(schoolId, request.resource.data) &&
+        request.resource.data.associationId == resource.data.associationId;
+    }
+
+    // A sede's denormalized associationId must be its parent school's, so the
+    // stored hierarchy stays consistent for anything that later reads it.
+    function matchesSchoolAssociation(data) {
+      return data.associationId ==
+        get(/databases/$(database)/documents/schools/$(data.schoolId)).data.associationId;
     }
 
     // All remaining tenant collections carry a `schoolId` field and are scoped
@@ -74,9 +94,11 @@ service cloud.firestore {
     // scope (checked against resource.data and request.resource.data).
     match /sedes/{id} {
       allow read, delete: if canAccessSchool(resource.data.schoolId);
-      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId) &&
+        matchesSchoolAssociation(request.resource.data);
       allow update: if canAccessSchool(resource.data.schoolId) &&
-        canAccessSchool(request.resource.data.schoolId);
+        canAccessSchool(request.resource.data.schoolId) &&
+        matchesSchoolAssociation(request.resource.data);
     }
 
     match /students/{id} {

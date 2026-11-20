@@ -27,12 +27,12 @@
 - [x] 3.3 Write tests for login (valid, invalid, persisted session, sign out)
 - [x] 3.4 Implement login, session persistence, and sign out
 - [x] 3.5 Implement scope resolution from `memberships` on login (association vs. single-school)
-- [ ] 3.6 Configure and wire the Google OAuth provider — code complete, blocked on console setup
+- [x] 3.6 Configure and wire the Google OAuth provider
   - [x] 3.6a Drop Facebook from the MVP (Meta app review is disproportionate for one school's instructors; `specs/user-auth/spec.md` amended)
   - [x] 3.6b Install `@react-native-google-signin/google-signin` + config plugin, add `scheme` to `app.json`
   - [x] 3.6c Implement `signInWithGoogle` (native sheet -> id token -> `signInWithCredential`) and the Google button on the login screen
-  - [ ] 3.6d **User:** enable Google in Firebase Auth, create the OAuth client IDs, set `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` in `.env`
-  - [ ] 3.6e **User:** produce a development build (`npx expo run:android`, or EAS) — the native module cannot run in Expo Go
+  - [x] 3.6d **User:** enable Google in Firebase Auth, create the OAuth client IDs, set `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` in `.env`
+  - [x] 3.6e **User:** produce a development build (`npx expo run:android`, or EAS) — the native module cannot run in Expo Go
 - [x] 3.7 Add auth-gated navigation (Home hub only when authenticated)
 
 ## 4. School Hierarchy (school-management)
