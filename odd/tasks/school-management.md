@@ -37,4 +37,6 @@ Assumptions: only association-scope users create or delete schools (school-scope
 - **L9** (2026-11-20) RDD assess `347c5b4..b803d31`: medium, review_due false (`under_budget`); no high-risk item (UI and tests), so no verifier.
 - **L10** (2026-11-20) User: "Yes, deploy the rules". Deployed `firestore.rules` from `c0afc1e` (sha256 e72b485a…5707) to `tkd-app-e3df0`: compiled and released.
 - **L11** (2026-11-20) Device check: membership works (Home shown), but Escuelas failed with `failed-precondition: The query requires an index`. The composite indexes in `firestore.indexes.json` had never been deployed (earlier deploys were rules-only). User: "Yes, deploy the indexes". Deployed with `--non-interactive` (deletes nothing); all 8 indexes are listed live, building.
-- Next: device check on the emulator (needs a `memberships/{uid}` doc created outside the app) Then the PR decision.
+- **L12** (2026-11-20) User, after the indexes built: "Done. It works!" The Escuelas flow works on the emulator.
+- **L13** (2026-11-20) User chose "Stacked PRs to main (Recommended)". Sliced into 5 branches rebuilt from `main` (final tree identical to the reviewed `feat/school-management`); each slice passes `tsc` and app tests on its own (90/108/113/123/129), rules 33/33 on slice 1. PRs: #2 rules (308 lines) → #3 data (409) → #4 schools list (360) → #5 detail + school form (350) → #6 sede form + navigation (407).
+- Next: merge in order; after each merge, retarget the next PR to `main`.
