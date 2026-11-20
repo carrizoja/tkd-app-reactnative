@@ -37,9 +37,9 @@
 
 ## 4. School Hierarchy (school-management)
 
-- [ ] 4.1 Write tests for school/sede CRUD and tenant isolation (in-scope allowed, cross-tenant denied)
-- [ ] 4.2 Implement schools + sedes repository against Firestore (scoped by Security Rules)
-- [ ] 4.3 Implement Escuelas / Sedes screens (list, create, edit, delete)
+- [x] 4.1 Write tests for school/sede CRUD and tenant isolation (in-scope allowed, cross-tenant denied)
+- [x] 4.2 Implement schools + sedes repository against Firestore (scoped by Security Rules)
+- [x] 4.3 Implement Escuelas / Sedes screens (list, create, edit, delete)
 
 ## 5. Students (student-management)
 

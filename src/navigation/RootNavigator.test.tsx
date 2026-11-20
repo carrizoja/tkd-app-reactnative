@@ -4,6 +4,8 @@ import type { SessionState } from "../features/user-auth/data/session";
 import type { UserScope } from "../features/user-auth/model/scope";
 import { AUTH_COPY, SESSION_COPY } from "../features/user-auth/ui/copy";
 import { useSession } from "../features/user-auth/ui/useSession";
+import { schoolService } from "../features/school-management/data/repository";
+import { SCHOOL_COPY } from "../features/school-management/ui/copy";
 import { RootNavigator } from "./RootNavigator";
 
 jest.mock("../features/user-auth/ui/useSession", () => ({ useSession: jest.fn() }));
@@ -18,6 +20,13 @@ jest.mock("../features/user-auth/data/google-signin", () => ({
   signInWithGoogle: jest.fn(),
 }));
 
+// The school screens reach Firestore through the school service; the gate tests
+// only need its list call.
+jest.mock("../features/school-management/data/repository", () => ({
+  schoolService: { listSchools: jest.fn() },
+}));
+
+const listSchoolsMock = schoolService.listSchools as jest.MockedFunction<typeof schoolService.listSchools>;
 const useSessionMock = useSession as jest.MockedFunction<typeof useSession>;
 const signOutUserMock = signOutUser as jest.MockedFunction<typeof signOutUser>;
 
@@ -57,6 +66,18 @@ describe("RootNavigator auth gate", () => {
     await render(<RootNavigator />);
 
     expect(screen.getByText(AUTH_COPY.loginTitle)).toBeTruthy();
+  });
+
+  it("links the Home hub to the schools of the user's scope", async () => {
+    const scope: UserScope = { kind: "school", schoolIds: ["school-1"] };
+    listSchoolsMock.mockResolvedValue([{ id: "school-1", associationId: "assoc-1", name: "Escuela ULJI" }]);
+    givenSession(activeWith(scope));
+
+    await render(<RootNavigator />);
+    await fireEvent.press(screen.getByText(SCHOOL_COPY.homeLink));
+
+    expect(await screen.findByText("Escuela ULJI")).toBeTruthy();
+    expect(listSchoolsMock).toHaveBeenCalledWith(scope);
   });
 
   it("shows the Home hub to a scoped instructor", async () => {
