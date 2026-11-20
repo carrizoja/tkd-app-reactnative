@@ -48,6 +48,7 @@ export function SchoolFormScreen({ scope, school, onDone }: SchoolFormScreenProp
 
   return (
     <ScrollView
+      className="flex-1 bg-white"
       contentContainerClassName="gap-6 bg-white px-6 py-6"
       keyboardShouldPersistTaps="handled"
     >

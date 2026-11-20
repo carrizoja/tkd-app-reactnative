@@ -8,6 +8,7 @@ import { Alert, ScrollView, Text, View } from "react-native";
 import type { UserScope } from "../../user-auth/model/scope";
 import { schoolService } from "../data/repository";
 import type { School, Sede } from "../model/types";
+import { STUDENT_COPY } from "../../student-management/ui/copy";
 import { SCHOOL_COPY, schoolErrorMessage } from "./copy";
 import {
   DangerButton,
@@ -27,6 +28,7 @@ interface SchoolDetailScreenProps {
   onCreateSede: (school: School) => void;
   onEditSede: (school: School, sede: Sede) => void;
   onDeleted: () => void;
+  onOpenStudents: (school: School) => void;
   reloadKey?: number;
 }
 
@@ -36,7 +38,8 @@ async function loadSchoolWithSedes(schoolId: string) {
 }
 
 export function SchoolDetailScreen(props: SchoolDetailScreenProps) {
-  const { scope, schoolId, onEditSchool, onCreateSede, onEditSede, onDeleted, reloadKey = 0 } = props;
+  const { scope, schoolId, onEditSchool, onCreateSede, onEditSede, onDeleted, onOpenStudents, reloadKey = 0 } =
+    props;
   const { state, reload } = useLoad(() => loadSchoolWithSedes(schoolId), [schoolId, reloadKey]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +77,9 @@ export function SchoolDetailScreen(props: SchoolDetailScreenProps) {
     ]);
 
   return (
-    <ScrollView contentContainerClassName="gap-4 bg-white px-6 py-6">
+    <ScrollView className="flex-1 bg-white" contentContainerClassName="gap-4 bg-white px-6 py-6">
       <Text className="text-2xl font-bold text-slate-900">{school.name}</Text>
+      <PrimaryButton label={STUDENT_COPY.schoolLink} onPress={() => onOpenStudents(school)} />
       <SecondaryButton label={SCHOOL_COPY.editSchool} onPress={() => onEditSchool(school)} />
 
       <View className="gap-3">

@@ -25,6 +25,11 @@ jest.mock("../features/user-auth/data/google-signin", () => ({
 jest.mock("../features/school-management/data/repository", () => ({
   schoolService: { listSchools: jest.fn() },
 }));
+// The student screens are registered as routes; keep the Firebase SDK and the
+// native image and date pickers out of the module graph. The gate tests never open them.
+jest.mock("../features/student-management/data/repository", () => ({ studentService: {} }));
+jest.mock("../features/student-management/ui/pickPhoto", () => ({ pickPhoto: jest.fn() }));
+jest.mock("../features/student-management/ui/openDatePicker", () => ({ openDatePicker: jest.fn() }));
 
 const listSchoolsMock = schoolService.listSchools as jest.MockedFunction<typeof schoolService.listSchools>;
 const useSessionMock = useSession as jest.MockedFunction<typeof useSession>;

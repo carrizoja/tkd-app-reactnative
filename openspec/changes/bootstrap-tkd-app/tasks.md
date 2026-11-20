@@ -43,10 +43,10 @@
 
 ## 5. Students (student-management)
 
-- [ ] 5.1 Write tests for student CRUD, photo upload, search by name/surname, and groups
-- [ ] 5.2 Implement students data layer (incl. Storage photo upload)
-- [ ] 5.3 Implement student list, profile (photo, belt/grade, stats), and search screens
-- [ ] 5.4 Implement student groups (create, add/remove members)
+- [x] 5.1 Write tests for student CRUD, photo upload, search by name/surname, and groups
+- [x] 5.2 Implement students data layer (incl. Storage photo upload)
+- [x] 5.3 Implement student list, profile (photo, belt/grade, stats), and search screens — stats wait for attendance and fees (sections 7–8)
+- [x] 5.4 Implement student groups (create, add/remove members)
 
 ## 6. Classes (class-management)
 
