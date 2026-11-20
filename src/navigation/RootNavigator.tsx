@@ -22,13 +22,20 @@ import { SESSION_COPY } from "../features/user-auth/ui/copy";
 import { useSession } from "../features/user-auth/ui/useSession";
 import { routeForSession } from "./routeForSession";
 import {
+  GroupDetailRoute,
+  GroupFormRoute,
+  GroupsRoute,
   SchoolDetailRoute,
   SchoolFormRoute,
   SchoolsRoute,
   ScopeContext,
   SedeFormRoute,
+  StudentFormRoute,
+  StudentProfileRoute,
+  StudentsRoute,
   type SchoolRoutesParamList,
 } from "./schoolRoutes";
+import { STUDENT_COPY } from "../features/student-management/ui/copy";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -111,6 +118,20 @@ export function RootNavigator() {
           <Stack.Screen name="SchoolDetail" component={SchoolDetailRoute} options={{ title: "" }} />
           <Stack.Screen name="SchoolForm" component={SchoolFormRoute} options={{ title: "" }} />
           <Stack.Screen name="SedeForm" component={SedeFormRoute} options={{ title: "" }} />
+          <Stack.Screen
+            name="Students"
+            component={StudentsRoute}
+            options={({ route }) => ({ title: `${STUDENT_COPY.studentsTitle} · ${route.params.school.name}` })}
+          />
+          <Stack.Screen name="StudentForm" component={StudentFormRoute} options={{ title: "" }} />
+          <Stack.Screen name="StudentProfile" component={StudentProfileRoute} options={{ title: "" }} />
+          <Stack.Screen
+            name="Groups"
+            component={GroupsRoute}
+            options={({ route }) => ({ title: `${STUDENT_COPY.groupsTitle} · ${route.params.school.name}` })}
+          />
+          <Stack.Screen name="GroupForm" component={GroupFormRoute} options={{ title: "" }} />
+          <Stack.Screen name="GroupDetail" component={GroupDetailRoute} options={{ title: "" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ScopeContext.Provider>

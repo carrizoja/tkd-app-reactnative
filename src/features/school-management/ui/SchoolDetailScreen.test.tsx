@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { schoolService } from "../data/repository";
 import { SchoolError } from "../model/types";
+import { STUDENT_COPY } from "../../student-management/ui/copy";
 import { SCHOOL_COPY } from "./copy";
 import { SchoolDetailScreen } from "./SchoolDetailScreen";
 import {
@@ -26,6 +27,7 @@ function renderDetail(overrides: Partial<Parameters<typeof SchoolDetailScreen>[0
     onCreateSede: jest.fn(),
     onEditSede: jest.fn(),
     onDeleted: jest.fn(),
+    onOpenStudents: jest.fn(),
     ...overrides,
   };
   return { props, view: render(<SchoolDetailScreen {...props} />) };
@@ -59,6 +61,14 @@ describe("SchoolDetailScreen", () => {
     expect(props.onCreateSede).toHaveBeenCalledWith(SCHOOL_A1);
     await fireEvent.press(screen.getByText(SCHOOL_COPY.editSchool));
     expect(props.onEditSchool).toHaveBeenCalledWith(SCHOOL_A1);
+  });
+
+  it("opens the school's students", async () => {
+    const { props, view } = renderDetail();
+    await view;
+
+    await fireEvent.press(await screen.findByText(STUDENT_COPY.schoolLink));
+    expect(props.onOpenStudents).toHaveBeenCalledWith(SCHOOL_A1);
   });
 
   it("S5: deletes a school without sedes after confirmation", async () => {

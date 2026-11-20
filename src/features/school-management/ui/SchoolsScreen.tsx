@@ -26,7 +26,7 @@ export function SchoolsScreen({ scope, onOpenSchool, onCreateSchool, reloadKey =
   }
 
   return (
-    <ScrollView contentContainerClassName="gap-3 bg-white px-6 py-6">
+    <ScrollView className="flex-1 bg-white" contentContainerClassName="gap-3 bg-white px-6 py-6">
       {state.data.length === 0 ? (
         <Text className="text-base text-slate-500">{SCHOOL_COPY.schoolsEmpty}</Text>
       ) : (
