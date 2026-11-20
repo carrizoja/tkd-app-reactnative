@@ -32,6 +32,8 @@ export interface Repository<T extends Entity> {
    * is derived rather than auto-generated.
    */
   set(id: string, value: Omit<T, "id">): Promise<void>;
+  /** Create a document under a Firestore-generated id and return it. */
+  create(value: Omit<T, "id">): Promise<T>;
   /** Partially update an existing document. */
   update(id: string, patch: Partial<Omit<T, "id">>): Promise<void>;
   /** Delete a document by id. */
@@ -56,6 +58,11 @@ export function createFirestoreRepository<T extends Entity>(
     },
     async set(id: string, value: Omit<T, "id">): Promise<void> {
       await setDoc(docRef(id), { id, ...value } as T);
+    },
+    async create(value: Omit<T, "id">): Promise<T> {
+      const created = { id: doc(ref()).id, ...value } as T;
+      await setDoc(docRef(created.id), created);
+      return created;
     },
     async update(id: string, patch: Partial<Omit<T, "id">>): Promise<void> {
       await updateDoc(doc(getDb(), collectionName, id), patch);
