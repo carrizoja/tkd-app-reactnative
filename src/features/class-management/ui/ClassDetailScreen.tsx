@@ -1,8 +1,9 @@
 /**
- * One class: its sede and schedule, its roster with the school's other students
+ * One class: its sede and schedule, a link to its attendance, its roster with the school's other students
  * to enroll (S4–S6), edit, deactivate/reactivate (S3) and delete (S2).
  */
 import { useState } from "react";
+import { ATTENDANCE_COPY } from "../../attendance-tracking/ui/copy";
 import { Alert, ScrollView, Text, View } from "react-native";
 import { schoolService } from "../../school-management/data/repository";
 import type { School } from "../../school-management/model/types";
@@ -10,6 +11,7 @@ import {
   DangerButton,
   ErrorText,
   LoadFallback,
+  PrimaryButton,
   SecondaryButton,
   SectionTitle,
 } from "../../school-management/ui/parts";
@@ -26,6 +28,7 @@ interface ClassDetailScreenProps {
   classId: string;
   onEdit: (klass: Class) => void;
   onDeleted: () => void;
+  onOpenAttendance: (klass: Class) => void;
   reloadKey?: number;
 }
 
@@ -42,7 +45,14 @@ async function loadClass(school: School, classId: string) {
   return { klass, enrolledIds, students, sede: sedes.find((s) => s.id === klass.sedeId) };
 }
 
-export function ClassDetailScreen({ school, classId, onEdit, onDeleted, reloadKey = 0 }: ClassDetailScreenProps) {
+export function ClassDetailScreen({
+  school,
+  classId,
+  onEdit,
+  onDeleted,
+  onOpenAttendance,
+  reloadKey = 0,
+}: ClassDetailScreenProps) {
   const { state, reload } = useLoad(() => loadClass(school, classId), [school.id, classId, reloadKey]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,6 +116,7 @@ export function ClassDetailScreen({ school, classId, onEdit, onDeleted, reloadKe
           {[sede?.name, formatSchedule(klass.schedule)].filter(Boolean).join(" · ")}
         </Text>
       </View>
+      <PrimaryButton label={ATTENDANCE_COPY.classLink} onPress={() => onOpenAttendance(klass)} disabled={busy} />
       <SecondaryButton label={CLASS_COPY.editClass} onPress={() => onEdit(klass)} disabled={busy} />
       <SecondaryButton
         label={inactive ? CLASS_COPY.reactivate : CLASS_COPY.deactivate}

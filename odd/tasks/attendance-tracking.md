@@ -24,7 +24,7 @@ Assumptions:
 |----|-------|-------|--------|-------------------|
 | T1 | S2, S6 (rules + emulator tests, including a full-class batch) — OpenSpec 7.1 | inline; Risk item 2, own commit | done | RED 5/12, GREEN 82/82 rules |
 | T2 | S1–S5 (attendance service + Firestore store) — OpenSpec 7.1, 7.2 | inline | done | RED 9/9 failed (stub), GREEN 242/242 app, tsc clean |
-| T3 | S1–S5 (Asistencia screen) and navigation — OpenSpec 7.3 | inline | pending | |
+| T3 | S1–S5 (Asistencia screen) and navigation — OpenSpec 7.3 | inline | done (device check pending) | RED: screen module missing + Asistencia link 1 failed; GREEN 251/251 app, tsc clean, rules 82/82 |
 
 ## Log
 
@@ -32,3 +32,5 @@ Assumptions:
 - **L2** (2026-11-21) User decision on marking: "Save button, start Presente (Recommended)"
 - **L3** (2026-11-21) Pre-existing: `Attendance` type and `attendanceId`; `markAttendance` and `listAttendanceByDate` in `data/repository.ts` are unused, and the latter lacks the `schoolId` filter the rules need. The rules only check `canAccessSchool`. A `classId + date` composite index is already deployed.
 - **L4** (2026-11-21) T2: `attendanceService` with `getDay` (S4, S5, A4) and `takeAttendance` (S1–S3, A2: rejects malformed or future dates, inactive classes, empty marks, and students not enrolled), saving a day in one batch. Replaced the unused `markAttendance`/`listAttendanceByDate` with a store that filters by `schoolId`. Typecheck found a wrong `Firestore` type in the T1 test helper; fixed in its own commit.
+- **L5** (2026-11-21) T1 independent verifier: PASS, no blockers (S2, S6, A3). Batches of 40–500 records for one class pass for both user types; the emulator does enforce the access-call limit (a batch over ~18 distinct classes is denied). Advisories, all already allowed at baseline: extra fields accepted (same as classes/enrollments), impossible dates such as `2026-13-45` pass the format check (the date picker prevents them), ids are ambiguous only for ids containing `_`, records with random ids from before can no longer be updated (none exist; `markAttendance` was unused).
+- **L6** (2026-11-21) T3 done: "Asistencia" button on the class detail opens the Attendance screen: date field with the native calendar (no future dates), "No se registró asistencia para esta fecha." or "Asistencia guardada para esta fecha.", a Presente/Ausente toggle per enrolled student with a present count, "Ya no inscriptos" read-only marks, history only for inactive classes, and "Guardar asistencia". OpenSpec 7.1–7.3 checked. Next: native review of the rules commit, deploy the rules (needs approval), device check.

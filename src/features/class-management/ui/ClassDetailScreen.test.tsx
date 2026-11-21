@@ -11,6 +11,7 @@ import {
 import { classService } from "../data/repository";
 import { ClassError } from "../model/types";
 import { ClassDetailScreen } from "./ClassDetailScreen";
+import { ATTENDANCE_COPY } from "../../attendance-tracking/ui/copy";
 import { CLASS_COPY } from "./copy";
 import { CENTRO, INFANTILES, NORTE, SCHOOL, type MockClassService } from "./test-helpers";
 
@@ -29,7 +30,13 @@ const schools = schoolService as unknown as MockSchoolService;
 const students = studentService as unknown as MockStudentService;
 
 function renderDetail() {
-  const props = { school: SCHOOL, classId: INFANTILES.id, onEdit: jest.fn(), onDeleted: jest.fn() };
+  const props = {
+    school: SCHOOL,
+    classId: INFANTILES.id,
+    onEdit: jest.fn(),
+    onDeleted: jest.fn(),
+    onOpenAttendance: jest.fn(),
+  };
   return { props, view: render(<ClassDetailScreen {...props} />) };
 }
 
@@ -133,5 +140,14 @@ describe("ClassDetailScreen", () => {
     await view;
 
     expect(await screen.findByText(CLASS_COPY.classMissing)).toBeTruthy();
+  });
+
+  it("attendance S1: opens the class's attendance", async () => {
+    const { props, view } = renderDetail();
+    await view;
+
+    await fireEvent.press(await screen.findByText(ATTENDANCE_COPY.classLink));
+
+    expect(props.onOpenAttendance).toHaveBeenCalledWith(INFANTILES);
   });
 });

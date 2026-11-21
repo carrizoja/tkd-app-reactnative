@@ -56,9 +56,9 @@
 
 ## 7. Attendance (attendance-tracking)
 
-- [ ] 7.1 Write tests for take-attendance (upsert on re-mark, only enrolled students) and history by date
-- [ ] 7.2 Implement attendance data layer (upsert by class/student/date)
-- [ ] 7.3 Implement take-attendance screen and attendance history (date filter)
+- [x] 7.1 Write tests for take-attendance (upsert on re-mark, only enrolled students) and history by date
+- [x] 7.2 Implement attendance data layer (upsert by class/student/date)
+- [x] 7.3 Implement take-attendance screen and attendance history (date filter)
 
 ## 8. Fees (fee-management)
 
