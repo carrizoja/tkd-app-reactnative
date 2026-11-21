@@ -97,7 +97,7 @@ beforeEach(async () => {
       schoolId: SCHOOL_A1,
       associationId: ASSOC_A,
       name: "Infantiles",
-      schedule: "Lun/Mie 18:00",
+      schedule: { days: [1, 3], start: "18:00", end: "19:00" },
       status: "active",
     });
   });

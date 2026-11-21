@@ -50,9 +50,9 @@
 
 ## 6. Classes (class-management)
 
-- [ ] 6.1 Write tests for class CRUD, deactivation, and same-school enrollment rule
-- [ ] 6.2 Implement classes + enrollment data layer
-- [ ] 6.3 Implement class list, create/edit, and roster/enrollment screens
+- [x] 6.1 Write tests for class CRUD, deactivation, and same-school enrollment rule
+- [x] 6.2 Implement classes + enrollment data layer
+- [x] 6.3 Implement class list, create/edit, and roster/enrollment screens
 
 ## 7. Attendance (attendance-tracking)
 

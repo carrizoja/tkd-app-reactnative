@@ -3,7 +3,7 @@
  * delete (S8/S9). Removing a member only takes them out of the group.
  */
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import type { School } from "../../school-management/model/types";
 import {
   DangerButton,
@@ -14,8 +14,9 @@ import {
 } from "../../school-management/ui/parts";
 import { useLoad } from "../../school-management/ui/useLoad";
 import { studentService } from "../data/repository";
-import type { Student, StudentGroup } from "../model/types";
+import type { StudentGroup } from "../model/types";
 import { fullName, STUDENT_COPY, studentErrorMessage } from "./copy";
+import { MemberRow } from "./MemberRow";
 
 interface GroupDetailScreenProps {
   school: School;
@@ -32,29 +33,6 @@ async function loadGroup(school: School, groupId: string) {
   ]);
   const group = groups.find((g) => g.id === groupId);
   return group ? { group, students } : null;
-}
-
-function MemberRow({ student, actionLabel, accessibilityLabel, onPress, disabled }: {
-  student: Student;
-  actionLabel: string;
-  accessibilityLabel: string;
-  onPress: () => void;
-  disabled: boolean;
-}) {
-  return (
-    <View className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <Text className="flex-1 text-base text-slate-900">{fullName(student)}</Text>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        onPress={onPress}
-        disabled={disabled}
-        className="rounded-lg border border-slate-300 px-3 py-2"
-      >
-        <Text className="text-sm font-semibold text-slate-900">{actionLabel}</Text>
-      </Pressable>
-    </View>
-  );
 }
 
 export function GroupDetailScreen({ school, groupId, onRename, onDeleted, reloadKey = 0 }: GroupDetailScreenProps) {
