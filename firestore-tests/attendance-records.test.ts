@@ -22,7 +22,6 @@ import {
   updateDoc,
   where,
   writeBatch,
-  type Firestore,
 } from "firebase/firestore";
 
 const PROJECT_ID = "demo-tkd";
@@ -61,8 +60,10 @@ const record = (classId: string, studentId: string, schoolId: string, date = DAT
 
 const idOf = (r: { classId: string; studentId: string; date: string }) => `${r.classId}_${r.studentId}_${r.date}`;
 
+type Db = ReturnType<typeof asPresidentA>;
+
 /** Writes a record under its deterministic id. */
-const mark = (db: Firestore, r: ReturnType<typeof record>, id = idOf(r)) => setDoc(doc(db, "attendance", id), r);
+const mark = (db: Db, r: ReturnType<typeof record>, id = idOf(r)) => setDoc(doc(db, "attendance", id), r);
 
 beforeAll(async () => {
   const { host, port } = parseHostPort();
