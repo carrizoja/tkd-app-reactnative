@@ -22,6 +22,9 @@ import { SESSION_COPY } from "../features/user-auth/ui/copy";
 import { useSession } from "../features/user-auth/ui/useSession";
 import { routeForSession } from "./routeForSession";
 import {
+  ClassDetailRoute,
+  ClassesRoute,
+  ClassFormRoute,
   GroupDetailRoute,
   GroupFormRoute,
   GroupsRoute,
@@ -35,6 +38,7 @@ import {
   StudentsRoute,
   type SchoolRoutesParamList,
 } from "./schoolRoutes";
+import { CLASS_COPY } from "../features/class-management/ui/copy";
 import { STUDENT_COPY } from "../features/student-management/ui/copy";
 
 export type RootStackParamList = {
@@ -132,6 +136,13 @@ export function RootNavigator() {
           />
           <Stack.Screen name="GroupForm" component={GroupFormRoute} options={{ title: "" }} />
           <Stack.Screen name="GroupDetail" component={GroupDetailRoute} options={{ title: "" }} />
+          <Stack.Screen
+            name="Classes"
+            component={ClassesRoute}
+            options={({ route }) => ({ title: `${CLASS_COPY.schoolLink} · ${route.params.school.name}` })}
+          />
+          <Stack.Screen name="ClassForm" component={ClassFormRoute} options={{ title: "" }} />
+          <Stack.Screen name="ClassDetail" component={ClassDetailRoute} options={{ title: "" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ScopeContext.Provider>
