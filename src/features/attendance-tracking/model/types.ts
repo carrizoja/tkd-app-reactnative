@@ -17,3 +17,26 @@ export interface Attendance extends Entity {
 }
 
 export const attendanceConverter = makeConverter<Attendance>();
+
+/** A day's marks, by student id: `true` is present, `false` absent. */
+export type AttendanceMarks = Record<string, boolean>;
+
+export type AttendanceErrorCode =
+  | "invalid-date"
+  /** Attendance cannot be taken for a day that has not happened yet (A2). */
+  | "future-date"
+  /** Inactive classes keep their history but take no new attendance (A2). */
+  | "class-inactive"
+  /** Only students enrolled in the class can be marked (S3). */
+  | "not-enrolled"
+  | "no-marks";
+
+export class AttendanceError extends Error {
+  readonly code: AttendanceErrorCode;
+
+  constructor(code: AttendanceErrorCode, message: string) {
+    super(message);
+    this.name = "AttendanceError";
+    this.code = code;
+  }
+}
