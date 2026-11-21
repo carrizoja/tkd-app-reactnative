@@ -119,7 +119,10 @@ describe("attendance", () => {
   });
 
   it("A3: the date must be YYYY-MM-DD and present a boolean", async () => {
-    await assertFails(mark(asPresidentA(), record("clsA1", "stuA1", SCHOOL_A1, "20/11/2026")));
+    // No "/" in these dates: a slash would make the id a nested path that no rule matches.
+    for (const date of ["2026-1-20", "20261120", "2026-11-20T00:00"]) {
+      await assertFails(mark(asPresidentA(), record("clsA1", "stuA1", SCHOOL_A1, date)));
+    }
     const notBoolean = { ...record("clsA1", "stuA1", SCHOOL_A1), present: "yes" };
     await assertFails(setDoc(doc(asPresidentA(), "attendance", idOf(notBoolean)), notBoolean));
   });
