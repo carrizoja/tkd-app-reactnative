@@ -117,18 +117,42 @@ service cloud.firestore {
         canAccessSchool(request.resource.data.schoolId);
     }
 
+    // A class hangs from a sede of its own school and carries that school's
+    // association; it never moves to another school.
+    function isSedeOfSchool(data) {
+      return get(/databases/$(database)/documents/sedes/$(data.sedeId)).data.schoolId == data.schoolId;
+    }
+
     match /classes/{id} {
       allow read, delete: if canAccessSchool(resource.data.schoolId);
-      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId) &&
+        matchesSchoolAssociation(request.resource.data) &&
+        isSedeOfSchool(request.resource.data);
+      // The sede is re-checked only when it changes, so a class can still be
+      // edited or deactivated if its sede was removed outside the app.
       allow update: if canAccessSchool(resource.data.schoolId) &&
-        canAccessSchool(request.resource.data.schoolId);
+        request.resource.data.schoolId == resource.data.schoolId &&
+        matchesSchoolAssociation(request.resource.data) &&
+        (request.resource.data.sedeId == resource.data.sedeId ||
+          isSedeOfSchool(request.resource.data));
+    }
+
+    // An enrollment joins a class and a student of the same school (the
+    // enrollment's), under the deterministic id `${classId}_${studentId}` so
+    // enrolling twice rewrites the same document.
+    function isValidEnrollment(id, data) {
+      return id == data.classId + '_' + data.studentId &&
+        get(/databases/$(database)/documents/classes/$(data.classId)).data.schoolId == data.schoolId &&
+        get(/databases/$(database)/documents/students/$(data.studentId)).data.schoolId == data.schoolId;
     }
 
     match /classEnrollments/{id} {
       allow read, delete: if canAccessSchool(resource.data.schoolId);
-      allow create: if canAccessSchool(request.resource.data.schoolId);
+      allow create: if canAccessSchool(request.resource.data.schoolId) &&
+        isValidEnrollment(id, request.resource.data);
       allow update: if canAccessSchool(resource.data.schoolId) &&
-        canAccessSchool(request.resource.data.schoolId);
+        canAccessSchool(request.resource.data.schoolId) &&
+        isValidEnrollment(id, request.resource.data);
     }
 
     match /attendance/{id} {
