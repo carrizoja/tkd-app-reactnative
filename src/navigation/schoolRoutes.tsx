@@ -1,11 +1,15 @@
 /**
- * Route wrappers for the school-management screens (OpenSpec 4.3). The screens
+ * Route wrappers for the school, student and class screens (OpenSpec 4.3, 5.3, 6.3). The screens
  * take plain props and callbacks; these wrappers read the user's scope and the
  * route params, and translate callbacks into navigation.
  */
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
+import type { Class } from "../features/class-management/model/types";
+import { ClassDetailScreen } from "../features/class-management/ui/ClassDetailScreen";
+import { ClassesScreen } from "../features/class-management/ui/ClassesScreen";
+import { ClassFormScreen } from "../features/class-management/ui/ClassFormScreen";
 import type { School, Sede } from "../features/school-management/model/types";
 import type { Student, StudentGroup } from "../features/student-management/model/types";
 import { GroupDetailScreen } from "../features/student-management/ui/GroupDetailScreen";
@@ -31,6 +35,9 @@ export type SchoolRoutesParamList = {
   Groups: { school: School };
   GroupForm: { school: School; group?: StudentGroup };
   GroupDetail: { school: School; groupId: string };
+  Classes: { school: School };
+  ClassForm: { school: School; klass?: Class };
+  ClassDetail: { school: School; classId: string };
 };
 
 /** The signed-in user's scope; provided by `RootNavigator` once it is resolved. */
@@ -84,6 +91,7 @@ export function SchoolDetailRoute({ navigation, route }: RouteProps<"SchoolDetai
       onEditSede={(school, sede) => navigation.navigate("SedeForm", { school, sede })}
       onDeleted={() => navigation.goBack()}
       onOpenStudents={(school) => navigation.navigate("Students", { school })}
+      onOpenClasses={(school) => navigation.navigate("Classes", { school })}
     />
   );
 }
@@ -167,6 +175,44 @@ export function GroupDetailRoute({ navigation, route }: RouteProps<"GroupDetail"
       groupId={groupId}
       reloadKey={useReturnCount()}
       onRename={(group) => navigation.navigate("GroupForm", { school, group })}
+      onDeleted={() => navigation.goBack()}
+    />
+  );
+}
+
+export function ClassesRoute({ navigation, route }: RouteProps<"Classes">) {
+  const { school } = route.params;
+  return (
+    <ClassesScreen
+      school={school}
+      reloadKey={useReturnCount()}
+      onOpenClass={(klass) => navigation.navigate("ClassDetail", { school, classId: klass.id })}
+      onCreateClass={() => navigation.navigate("ClassForm", { school })}
+    />
+  );
+}
+
+export function ClassFormRoute({ navigation, route }: RouteProps<"ClassForm">) {
+  const { school, klass } = route.params;
+  return (
+    <ClassFormScreen
+      school={school}
+      klass={klass}
+      // A new class replaces the form, so "back" from it returns to the list.
+      onCreated={(created) => navigation.replace("ClassDetail", { school, classId: created.id })}
+      onDone={() => navigation.goBack()}
+    />
+  );
+}
+
+export function ClassDetailRoute({ navigation, route }: RouteProps<"ClassDetail">) {
+  const { school, classId } = route.params;
+  return (
+    <ClassDetailScreen
+      school={school}
+      classId={classId}
+      reloadKey={useReturnCount()}
+      onEdit={(klass) => navigation.navigate("ClassForm", { school, klass })}
       onDeleted={() => navigation.goBack()}
     />
   );
