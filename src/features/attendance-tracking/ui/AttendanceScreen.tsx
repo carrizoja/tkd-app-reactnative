@@ -4,12 +4,15 @@
  * Presente; tapping a student toggles the mark, and "Guardar asistencia"
  * saves the whole day at once (A1). A recorded date shows its saved marks
  * (S2, S4) or says nothing was recorded (S5). Inactive classes are
- * history only (A2).
+ * history only (A2). The date starts on the class's most recent scheduled
+ * day, and a day the class does not meet cannot be marked (L9).
  */
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { classService } from "../../class-management/data/repository";
+import { lastClassDay, meetsOn } from "../../class-management/model/schedule";
 import type { Class } from "../../class-management/model/types";
+import { formatDays } from "../../class-management/ui/copy";
 import type { School } from "../../school-management/model/types";
 import { ErrorText, LoadFallback, PrimaryButton, SectionTitle } from "../../school-management/ui/parts";
 import { useLoad } from "../../school-management/ui/useLoad";
@@ -69,7 +72,7 @@ function SavedMark({ student, present }: { student: Student; present: boolean })
 }
 
 export function AttendanceScreen({ school, klass }: AttendanceScreenProps) {
-  const [date, setDate] = useState(() => toIsoDate(new Date()));
+  const [date, setDate] = useState(() => lastClassDay(klass.schedule, toIsoDate(new Date())));
   // Marks changed on screen since the day loaded; the rest come from the saved day.
   const [changes, setChanges] = useState<AttendanceMarks>({});
   const [busy, setBusy] = useState(false);
@@ -94,12 +97,15 @@ export function AttendanceScreen({ school, klass }: AttendanceScreenProps) {
   const { enrolled, students } = people.state.data;
   const saved = day.state.data;
   const active = klass.status === "active";
+  const classDay = meetsOn(klass.schedule, date);
+  // Marking is open only on a scheduled day of an active class.
+  const marking = active && classDay;
   const markOf = (id: string) => changes[id] ?? saved.marks[id] ?? true;
   const presentCount = enrolled.filter((s) => markOf(s.id)).length;
   // Saved marks of students shown outside the roster: no longer enrolled (A4), or every
-  // saved mark when the class is inactive and only its history is shown (A2).
+  // saved mark when marking is closed and only the history is shown (A2).
   const historyOnly = students.filter(
-    (s) => s.id in saved.marks && (!active || !enrolled.some((e) => e.id === s.id)),
+    (s) => s.id in saved.marks && (!marking || !enrolled.some((e) => e.id === s.id)),
   );
 
   const pickDate = async () => {
@@ -151,7 +157,11 @@ export function AttendanceScreen({ school, klass }: AttendanceScreenProps) {
         {saved.recorded ? ATTENDANCE_COPY.recorded : ATTENDANCE_COPY.notRecorded}
       </Text>
 
-      {active ? (
+      {!active ? (
+        <Text className="text-base text-slate-500">{ATTENDANCE_COPY.inactiveNotice}</Text>
+      ) : !classDay ? (
+        <Text className="text-base text-slate-500">{ATTENDANCE_COPY.offDay(klass.name, formatDays(klass.schedule))}</Text>
+      ) : (
         <View className="gap-3">
           {enrolled.length === 0 ? (
             <Text className="text-base text-slate-500">{ATTENDANCE_COPY.rosterEmpty}</Text>
@@ -170,13 +180,11 @@ export function AttendanceScreen({ school, klass }: AttendanceScreenProps) {
             </>
           )}
         </View>
-      ) : (
-        <Text className="text-base text-slate-500">{ATTENDANCE_COPY.inactiveNotice}</Text>
       )}
 
       {historyOnly.length > 0 ? (
         <View className="gap-3">
-          {active ? <SectionTitle>{ATTENDANCE_COPY.formerTitle}</SectionTitle> : null}
+          {marking ? <SectionTitle>{ATTENDANCE_COPY.formerTitle}</SectionTitle> : null}
           {historyOnly.map((student) => (
             <SavedMark key={student.id} student={student} present={saved.marks[student.id]} />
           ))}
@@ -185,7 +193,7 @@ export function AttendanceScreen({ school, klass }: AttendanceScreenProps) {
 
       <ErrorText message={error} />
       {notice ? <Text className="text-base font-medium text-emerald-700">{notice}</Text> : null}
-      {active && enrolled.length > 0 ? (
+      {marking && enrolled.length > 0 ? (
         <PrimaryButton label={ATTENDANCE_COPY.save} onPress={save} disabled={busy} />
       ) : null}
     </ScrollView>

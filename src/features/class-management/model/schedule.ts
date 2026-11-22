@@ -33,6 +33,31 @@ export function normalizeSchedule(schedule: ClassSchedule): ClassSchedule {
   return { days, start: schedule.start, end: schedule.end };
 }
 
+/** The ISO weekday (1 = Monday … 7 = Sunday) of a `YYYY-MM-DD` calendar day. */
+function weekdayOf(isoDate: string): Weekday {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  // UTC keeps the calendar day fixed whatever the device's time zone.
+  return ((new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7 + 1) as Weekday;
+}
+
+/** Whether the class meets on a `YYYY-MM-DD` calendar day. */
+export function meetsOn(schedule: ClassSchedule, isoDate: string): boolean {
+  return schedule.days.includes(weekdayOf(isoDate));
+}
+
+/** The most recent `YYYY-MM-DD` day, `today` included, on which the class meets. */
+export function lastClassDay(schedule: ClassSchedule, today: string): string {
+  const [year, month, day] = today.split("-").map(Number);
+  const cursor = new Date(Date.UTC(year, month - 1, day));
+  // A valid schedule has at least one day, so a match is at most 6 days back.
+  for (let back = 0; back < 7; back++) {
+    const iso = cursor.toISOString().slice(0, 10);
+    if (meetsOn(schedule, iso)) return iso;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return today;
+}
+
 /** Classes split by status (S3); each part keeps the given order. */
 export function splitByStatus(classes: Class[]): { active: Class[]; inactive: Class[] } {
   return {

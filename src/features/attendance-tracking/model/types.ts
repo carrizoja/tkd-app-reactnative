@@ -25,6 +25,8 @@ export type AttendanceErrorCode =
   | "invalid-date"
   /** Attendance cannot be taken for a day that has not happened yet (A2). */
   | "future-date"
+  /** Attendance is only taken on the class's scheduled weekdays. */
+  | "not-class-day"
   /** Inactive classes keep their history but take no new attendance (A2). */
   | "class-inactive"
   /** Only students enrolled in the class can be marked (S3). */

@@ -10,6 +10,7 @@ export const ATTENDANCE_COPY = {
   dateLabel: "Fecha",
   recorded: "Asistencia guardada para esta fecha.",
   notRecorded: "No se registró asistencia para esta fecha.",
+  offDay: (className: string, days: string) => `${className} no tiene clase ese día (${days}).`,
   inactiveNotice: "La clase está inactiva: solo se puede consultar el historial.",
   rosterEmpty: "No hay alumnos inscriptos en esta clase.",
   present: "Presente",
@@ -24,6 +25,7 @@ export const ATTENDANCE_COPY = {
 const ERROR_MESSAGES: Record<AttendanceErrorCode, string> = {
   "invalid-date": "La fecha no es válida.",
   "future-date": "No se puede tomar asistencia de un día que todavía no pasó.",
+  "not-class-day": "La clase no se dicta ese día.",
   "class-inactive": "La clase está inactiva.",
   "not-enrolled": "Hay alumnos que ya no están inscriptos en la clase. Volvé a abrir la asistencia.",
   "no-marks": "No hay alumnos para marcar.",

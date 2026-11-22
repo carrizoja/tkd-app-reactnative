@@ -1,9 +1,11 @@
 /**
  * Attendance use cases (OpenSpec 7.2, odd/tasks/attendance-tracking.md).
  * Security Rules enforce tenancy, the deterministic id and a same-school
- * class; this service validates the date, keeps to the enrolled students
+ * class; this service validates the date (a past or present day the class
+ * meets on), keeps to the enrolled students
  * (S3) and saves a whole day at once (A1).
  */
+import { meetsOn } from "../../class-management/model/schedule";
 import type { Class } from "../../class-management/model/types";
 import { attendanceId, type DateString } from "../../../lib/model/ids";
 import { AttendanceError, type Attendance, type AttendanceMarks } from "../model/types";
@@ -60,6 +62,9 @@ export function createAttendanceService(store: AttendanceStore, deps: Attendance
       // `YYYY-MM-DD` strings compare in calendar order.
       if (date > deps.today()) {
         throw new AttendanceError("future-date", `Attendance cannot be taken for ${date} yet.`);
+      }
+      if (!meetsOn(klass.schedule, date)) {
+        throw new AttendanceError("not-class-day", `Class ${klass.id} does not meet on ${date}.`);
       }
       if (klass.status !== "active") {
         throw new AttendanceError("class-inactive", `Class ${klass.id} is inactive.`);
