@@ -1,12 +1,13 @@
 /**
- * Route wrappers for the school, student, class and attendance screens (OpenSpec 4.3, 5.3, 6.3,
- * 7.3). The screens take plain props and callbacks; these wrappers read the user's scope and the
+ * Route wrappers for the school, student, class, attendance, fee and calendar screens (OpenSpec
+ * 4.3, 5.3, 6.3, 7.3, 8.3, 9.3). The screens take plain props and callbacks; these wrappers read the user's scope and the
  * route params, and translate callbacks into navigation.
  */
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { AttendanceScreen } from "../features/attendance-tracking/ui/AttendanceScreen";
+import { CalendarScreen } from "../features/event-calendar/ui/CalendarScreen";
 import { FeesScreen } from "../features/fee-management/ui/FeesScreen";
 import type { Class } from "../features/class-management/model/types";
 import { ClassDetailScreen } from "../features/class-management/ui/ClassDetailScreen";
@@ -42,6 +43,7 @@ export type SchoolRoutesParamList = {
   ClassDetail: { school: School; classId: string };
   Attendance: { school: School; klass: Class };
   Fees: { school: School };
+  Calendar: { school: School };
 };
 
 /** The signed-in user's scope; provided by `RootNavigator` once it is resolved. */
@@ -97,6 +99,7 @@ export function SchoolDetailRoute({ navigation, route }: RouteProps<"SchoolDetai
       onOpenStudents={(school) => navigation.navigate("Students", { school })}
       onOpenClasses={(school) => navigation.navigate("Classes", { school })}
       onOpenFees={(school) => navigation.navigate("Fees", { school })}
+      onOpenCalendar={(school) => navigation.navigate("Calendar", { school })}
     />
   );
 }
@@ -231,4 +234,8 @@ export function AttendanceRoute({ route }: RouteProps<"Attendance">) {
 
 export function FeesRoute({ route }: RouteProps<"Fees">) {
   return <FeesScreen school={route.params.school} />;
+}
+
+export function CalendarRoute({ route }: RouteProps<"Calendar">) {
+  return <CalendarScreen school={route.params.school} />;
 }

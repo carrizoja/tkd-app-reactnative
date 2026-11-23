@@ -34,6 +34,7 @@ jest.mock("../features/class-management/data/repository", () => ({ classService:
 jest.mock("../features/class-management/ui/openTimePicker", () => ({ openTimePicker: jest.fn() }));
 jest.mock("../features/attendance-tracking/data/repository", () => ({ attendanceService: {} }));
 jest.mock("../features/fee-management/data/repository", () => ({ feeService: {} }));
+jest.mock("../features/event-calendar/data/repository", () => ({ eventService: {} }));
 
 const listSchoolsMock = schoolService.listSchools as jest.MockedFunction<typeof schoolService.listSchools>;
 const useSessionMock = useSession as jest.MockedFunction<typeof useSession>;

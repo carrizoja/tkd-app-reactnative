@@ -68,9 +68,9 @@
 
 ## 9. Events (event-calendar)
 
-- [ ] 9.1 Write tests for create-event (valid types, reject unknown) and browse/filter by type
-- [ ] 9.2 Implement events data layer
-- [ ] 9.3 Implement Calendario: create event and list/filter upcoming events
+- [x] 9.1 Write tests for create-event (valid types, reject unknown) and browse/filter by type
+- [x] 9.2 Implement events data layer
+- [x] 9.3 Implement Calendario: create event and list/filter upcoming events
 
 ## 10. Integration & Wrap-up
 

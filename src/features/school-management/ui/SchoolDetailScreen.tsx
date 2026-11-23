@@ -9,6 +9,7 @@ import type { UserScope } from "../../user-auth/model/scope";
 import { schoolService } from "../data/repository";
 import type { School, Sede } from "../model/types";
 import { CLASS_COPY } from "../../class-management/ui/copy";
+import { EVENT_COPY } from "../../event-calendar/ui/copy";
 import { FEE_COPY } from "../../fee-management/ui/copy";
 import { STUDENT_COPY } from "../../student-management/ui/copy";
 import { SCHOOL_COPY, schoolErrorMessage } from "./copy";
@@ -33,6 +34,7 @@ interface SchoolDetailScreenProps {
   onOpenStudents: (school: School) => void;
   onOpenClasses: (school: School) => void;
   onOpenFees: (school: School) => void;
+  onOpenCalendar: (school: School) => void;
   reloadKey?: number;
 }
 
@@ -52,6 +54,7 @@ export function SchoolDetailScreen(props: SchoolDetailScreenProps) {
     onOpenStudents,
     onOpenClasses,
     onOpenFees,
+    onOpenCalendar,
     reloadKey = 0,
   } = props;
   const { state, reload } = useLoad(() => loadSchoolWithSedes(schoolId), [schoolId, reloadKey]);
@@ -96,6 +99,7 @@ export function SchoolDetailScreen(props: SchoolDetailScreenProps) {
       <PrimaryButton label={STUDENT_COPY.schoolLink} onPress={() => onOpenStudents(school)} />
       <PrimaryButton label={CLASS_COPY.schoolLink} onPress={() => onOpenClasses(school)} />
       <PrimaryButton label={FEE_COPY.schoolLink} onPress={() => onOpenFees(school)} />
+      <PrimaryButton label={EVENT_COPY.schoolLink} onPress={() => onOpenCalendar(school)} />
       <SecondaryButton label={SCHOOL_COPY.editSchool} onPress={() => onEditSchool(school)} />
 
       <View className="gap-3">

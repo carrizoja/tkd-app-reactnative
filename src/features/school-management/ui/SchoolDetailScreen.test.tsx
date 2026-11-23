@@ -1,4 +1,5 @@
 import { CLASS_COPY } from "../../class-management/ui/copy";
+import { EVENT_COPY } from "../../event-calendar/ui/copy";
 import { FEE_COPY } from "../../fee-management/ui/copy";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { schoolService } from "../data/repository";
@@ -32,6 +33,7 @@ function renderDetail(overrides: Partial<Parameters<typeof SchoolDetailScreen>[0
     onOpenStudents: jest.fn(),
     onOpenClasses: jest.fn(),
     onOpenFees: jest.fn(),
+    onOpenCalendar: jest.fn(),
     ...overrides,
   };
   return { props, view: render(<SchoolDetailScreen {...props} />) };
@@ -89,6 +91,14 @@ describe("SchoolDetailScreen", () => {
 
     await fireEvent.press(await screen.findByText(FEE_COPY.schoolLink));
     expect(props.onOpenFees).toHaveBeenCalledWith(SCHOOL_A1);
+  });
+
+  it("opens the school's calendar", async () => {
+    const { props, view } = renderDetail();
+    await view;
+
+    await fireEvent.press(await screen.findByText(EVENT_COPY.schoolLink));
+    expect(props.onOpenCalendar).toHaveBeenCalledWith(SCHOOL_A1);
   });
 
   it("S5: deletes a school without sedes after confirmation", async () => {
