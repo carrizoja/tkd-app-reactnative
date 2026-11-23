@@ -24,3 +24,16 @@ export interface Payment extends Entity {
 }
 
 export const paymentConverter = makeConverter<Payment>();
+
+export type FeeErrorCode = "invalid-period" | "future-period" | "invalid-amount" | "already-paid";
+
+/** A rejected fee operation; `code` lets the UI show the right message. */
+export class FeeError extends Error {
+  readonly code: FeeErrorCode;
+
+  constructor(code: FeeErrorCode, message: string) {
+    super(message);
+    this.name = "FeeError";
+    this.code = code;
+  }
+}
