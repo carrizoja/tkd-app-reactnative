@@ -19,3 +19,19 @@ export interface CalendarEvent extends Entity {
 }
 
 export const eventConverter = makeConverter<CalendarEvent>();
+
+export type EventErrorCode = "invalid-type" | "invalid-title" | "invalid-date" | "past-date";
+
+/** A rejected event operation; `code` lets the UI show the right message. */
+export class EventError extends Error {
+  readonly code: EventErrorCode;
+
+  constructor(code: EventErrorCode, message: string) {
+    super(message);
+    this.name = "EventError";
+    this.code = code;
+  }
+}
+
+/** Longest title the rules accept. */
+export const EVENT_TITLE_MAX = 100;
