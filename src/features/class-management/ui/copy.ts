@@ -66,10 +66,16 @@ export const CLASS_COPY = {
   unknownError: "No pudimos completar la operación. Intentá otra vez.",
 } as const;
 
+/** "Lun, Mié, Vie" */
+export function formatDays(schedule: ClassSchedule): string {
+  return WEEKDAYS.filter((w) => schedule.days.includes(w.day))
+    .map((w) => w.short)
+    .join(", ");
+}
+
 /** "Lun, Mié, Vie · 18:00–19:30" */
 export function formatSchedule(schedule: ClassSchedule): string {
-  const days = WEEKDAYS.filter((w) => schedule.days.includes(w.day)).map((w) => w.short);
-  return `${days.join(", ")} · ${schedule.start}–${schedule.end}`;
+  return `${formatDays(schedule)} · ${schedule.start}–${schedule.end}`;
 }
 
 /** The message to show for a failed class or enrollment operation. */

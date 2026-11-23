@@ -6,7 +6,8 @@ import { createAttendanceService, type AttendanceStore } from "./attendance-serv
 // transform. Every test injects an in-memory store instead.
 jest.mock("./repository", () => ({}));
 
-const TODAY = "2026-11-21";
+/** A Friday: the test class meets Monday, Wednesday and Friday. */
+const TODAY = "2026-11-20";
 
 const klass = (overrides: Partial<Class> = {}): Class => ({
   id: "cls-1",
@@ -90,6 +91,16 @@ describe("takeAttendance", () => {
     expect(saves).toHaveLength(0);
   });
 
+  it("rejects a day the class does not meet, saving nothing", async () => {
+    const { service, saves } = setup();
+
+    // 2026-11-19 is a Thursday; the class meets Monday, Wednesday and Friday.
+    await expect(service.takeAttendance(klass(), "2026-11-19", { "stu-ana": true })).rejects.toMatchObject({
+      code: "not-class-day",
+    });
+    expect(saves).toHaveLength(0);
+  });
+
   it("rejects saving with no marks", async () => {
     const { service, saves } = setup();
 
@@ -104,7 +115,7 @@ describe("getDay", () => {
       records: [
         record("stu-ana", "2026-11-20", true),
         record("stu-beto", "2026-11-20", false),
-        record("stu-ana", TODAY, false),
+        record("stu-ana", "2026-11-18", false),
         record("stu-ana", "2026-11-20", true, "cls-2"),
       ],
     });
