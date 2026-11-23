@@ -26,6 +26,7 @@ import {
   ClassDetailRoute,
   ClassesRoute,
   ClassFormRoute,
+  FeesRoute,
   GroupDetailRoute,
   GroupFormRoute,
   GroupsRoute,
@@ -145,6 +146,7 @@ export function RootNavigator() {
           <Stack.Screen name="ClassForm" component={ClassFormRoute} options={{ title: "" }} />
           <Stack.Screen name="ClassDetail" component={ClassDetailRoute} options={{ title: "" }} />
           <Stack.Screen name="Attendance" component={AttendanceRoute} options={{ title: "" }} />
+          <Stack.Screen name="Fees" component={FeesRoute} options={{ title: "" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ScopeContext.Provider>

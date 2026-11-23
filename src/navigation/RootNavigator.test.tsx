@@ -33,6 +33,7 @@ jest.mock("../features/student-management/ui/openDatePicker", () => ({ openDateP
 jest.mock("../features/class-management/data/repository", () => ({ classService: {} }));
 jest.mock("../features/class-management/ui/openTimePicker", () => ({ openTimePicker: jest.fn() }));
 jest.mock("../features/attendance-tracking/data/repository", () => ({ attendanceService: {} }));
+jest.mock("../features/fee-management/data/repository", () => ({ feeService: {} }));
 
 const listSchoolsMock = schoolService.listSchools as jest.MockedFunction<typeof schoolService.listSchools>;
 const useSessionMock = useSession as jest.MockedFunction<typeof useSession>;

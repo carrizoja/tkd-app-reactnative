@@ -7,6 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { AttendanceScreen } from "../features/attendance-tracking/ui/AttendanceScreen";
+import { FeesScreen } from "../features/fee-management/ui/FeesScreen";
 import type { Class } from "../features/class-management/model/types";
 import { ClassDetailScreen } from "../features/class-management/ui/ClassDetailScreen";
 import { ClassesScreen } from "../features/class-management/ui/ClassesScreen";
@@ -40,6 +41,7 @@ export type SchoolRoutesParamList = {
   ClassForm: { school: School; klass?: Class };
   ClassDetail: { school: School; classId: string };
   Attendance: { school: School; klass: Class };
+  Fees: { school: School };
 };
 
 /** The signed-in user's scope; provided by `RootNavigator` once it is resolved. */
@@ -94,6 +96,7 @@ export function SchoolDetailRoute({ navigation, route }: RouteProps<"SchoolDetai
       onDeleted={() => navigation.goBack()}
       onOpenStudents={(school) => navigation.navigate("Students", { school })}
       onOpenClasses={(school) => navigation.navigate("Classes", { school })}
+      onOpenFees={(school) => navigation.navigate("Fees", { school })}
     />
   );
 }
@@ -224,4 +227,8 @@ export function ClassDetailRoute({ navigation, route }: RouteProps<"ClassDetail"
 export function AttendanceRoute({ route }: RouteProps<"Attendance">) {
   const { school, klass } = route.params;
   return <AttendanceScreen school={school} klass={klass} />;
+}
+
+export function FeesRoute({ route }: RouteProps<"Fees">) {
+  return <FeesScreen school={route.params.school} />;
 }

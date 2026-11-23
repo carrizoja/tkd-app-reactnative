@@ -18,8 +18,8 @@ export interface Payment extends Entity {
   period: PeriodString;
   amount: number;
   status: PaymentStatus;
-  /** ISO timestamp of when the payment was recorded. */
-  paidAt?: string;
+  /** ISO timestamp of when the payment was recorded (the rules require it). */
+  paidAt: string;
   method: PaymentMethod;
 }
 
