@@ -23,7 +23,7 @@ Assumptions:
 | ID | Specs | Route | Status | Evidence / commit |
 |----|-------|-------|--------|-------------------|
 | T1 | S2, S6 (rules + emulator tests, including a full-class batch) — OpenSpec 7.1 | inline; Risk item 2, own commit | done | RED 5/12, GREEN 82/82 rules |
-| T2 | S1–S5 (attendance service + Firestore store) — OpenSpec 7.1, 7.2 | inline | pending | |
+| T2 | S1–S5 (attendance service + Firestore store) — OpenSpec 7.1, 7.2 | inline | done | RED 9/9 failed (stub), GREEN 242/242 app, tsc clean |
 | T3 | S1–S5 (Asistencia screen) and navigation — OpenSpec 7.3 | inline | pending | |
 
 ## Log
@@ -31,3 +31,4 @@ Assumptions:
 - **L1** (2026-11-21) User request: "Yes, start section 7"
 - **L2** (2026-11-21) User decision on marking: "Save button, start Presente (Recommended)"
 - **L3** (2026-11-21) Pre-existing: `Attendance` type and `attendanceId`; `markAttendance` and `listAttendanceByDate` in `data/repository.ts` are unused, and the latter lacks the `schoolId` filter the rules need. The rules only check `canAccessSchool`. A `classId + date` composite index is already deployed.
+- **L4** (2026-11-21) T2: `attendanceService` with `getDay` (S4, S5, A4) and `takeAttendance` (S1–S3, A2: rejects malformed or future dates, inactive classes, empty marks, and students not enrolled), saving a day in one batch. Replaced the unused `markAttendance`/`listAttendanceByDate` with a store that filters by `schoolId`. Typecheck found a wrong `Firestore` type in the T1 test helper; fixed in its own commit.
