@@ -23,6 +23,7 @@ import { useSession } from "../features/user-auth/ui/useSession";
 import { routeForSession } from "./routeForSession";
 import {
   AttendanceRoute,
+  CalendarRoute,
   ClassDetailRoute,
   ClassesRoute,
   ClassFormRoute,
@@ -147,6 +148,7 @@ export function RootNavigator() {
           <Stack.Screen name="ClassDetail" component={ClassDetailRoute} options={{ title: "" }} />
           <Stack.Screen name="Attendance" component={AttendanceRoute} options={{ title: "" }} />
           <Stack.Screen name="Fees" component={FeesRoute} options={{ title: "" }} />
+          <Stack.Screen name="Calendar" component={CalendarRoute} options={{ title: "" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ScopeContext.Provider>
