@@ -105,19 +105,23 @@ describe("events", () => {
   });
 
   it("A5: the title must be a non-empty string", async () => {
-    for (const title of ["", 42, null]) {
+    for (const title of ["", 42, null, "x".repeat(101)]) {
       await assertFails(put(asPresidentA(), "bad", event(SCHOOL_A1, ASSOC_A, { title })));
     }
+    await assertSucceeds(put(asPresidentA(), "max", event(SCHOOL_A1, ASSOC_A, { title: "x".repeat(100) })));
   });
 
   it("A5: the date must be YYYY-MM-DD", async () => {
-    for (const date of ["2026-12", "05/12/2026", "2026-12-05T10:00", 20261205]) {
+    for (const date of ["2026-12", "05/12/2026", "2026-12-05T10:00", 20261205, "2026-13-01", "2026-00-10", "2026-12-32", "2026-12-00"]) {
       await assertFails(put(asPresidentA(), "bad", event(SCHOOL_A1, ASSOC_A, { date })));
     }
   });
 
   it("A5: the associationId must be the school's", async () => {
     await assertFails(put(asPresidentA(), "bad", event(SCHOOL_A1, ASSOC_B)));
+    const { associationId: _a, ...noAssociation } = event(SCHOOL_A1, ASSOC_A);
+    await assertFails(put(asPresidentA(), "bad", noAssociation));
+    await assertFails(updateDoc(doc(asPresidentA(), "events", "evA1"), { associationId: ASSOC_B }));
   });
 
   it("A5: an update never moves an event to another school", async () => {
