@@ -22,6 +22,7 @@ import { SESSION_COPY } from "../features/user-auth/ui/copy";
 import { useSession } from "../features/user-auth/ui/useSession";
 import { routeForSession } from "./routeForSession";
 import {
+  AttendanceRoute,
   ClassDetailRoute,
   ClassesRoute,
   ClassFormRoute,
@@ -143,6 +144,7 @@ export function RootNavigator() {
           />
           <Stack.Screen name="ClassForm" component={ClassFormRoute} options={{ title: "" }} />
           <Stack.Screen name="ClassDetail" component={ClassDetailRoute} options={{ title: "" }} />
+          <Stack.Screen name="Attendance" component={AttendanceRoute} options={{ title: "" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ScopeContext.Provider>

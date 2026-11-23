@@ -1,11 +1,12 @@
 /**
- * Route wrappers for the school, student and class screens (OpenSpec 4.3, 5.3, 6.3). The screens
- * take plain props and callbacks; these wrappers read the user's scope and the
+ * Route wrappers for the school, student, class and attendance screens (OpenSpec 4.3, 5.3, 6.3,
+ * 7.3). The screens take plain props and callbacks; these wrappers read the user's scope and the
  * route params, and translate callbacks into navigation.
  */
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
+import { AttendanceScreen } from "../features/attendance-tracking/ui/AttendanceScreen";
 import type { Class } from "../features/class-management/model/types";
 import { ClassDetailScreen } from "../features/class-management/ui/ClassDetailScreen";
 import { ClassesScreen } from "../features/class-management/ui/ClassesScreen";
@@ -38,6 +39,7 @@ export type SchoolRoutesParamList = {
   Classes: { school: School };
   ClassForm: { school: School; klass?: Class };
   ClassDetail: { school: School; classId: string };
+  Attendance: { school: School; klass: Class };
 };
 
 /** The signed-in user's scope; provided by `RootNavigator` once it is resolved. */
@@ -214,6 +216,12 @@ export function ClassDetailRoute({ navigation, route }: RouteProps<"ClassDetail"
       reloadKey={useReturnCount()}
       onEdit={(klass) => navigation.navigate("ClassForm", { school, klass })}
       onDeleted={() => navigation.goBack()}
+      onOpenAttendance={(klass) => navigation.navigate("Attendance", { school, klass })}
     />
   );
+}
+
+export function AttendanceRoute({ route }: RouteProps<"Attendance">) {
+  const { school, klass } = route.params;
+  return <AttendanceScreen school={school} klass={klass} />;
 }
