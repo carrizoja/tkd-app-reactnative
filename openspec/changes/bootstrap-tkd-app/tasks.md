@@ -62,9 +62,9 @@
 
 ## 8. Fees (fee-management)
 
-- [ ] 8.1 Write tests for register-payment (one per period, cash method) and overdue listing
-- [ ] 8.2 Implement payments data layer (unique per student/period)
-- [ ] 8.3 Implement Cuotas: register payment and overdue-students view
+- [x] 8.1 Write tests for register-payment (one per period, cash method) and overdue listing
+- [x] 8.2 Implement payments data layer (unique per student/period)
+- [x] 8.3 Implement Cuotas: register payment and overdue-students view
 
 ## 9. Events (event-calendar)
 
